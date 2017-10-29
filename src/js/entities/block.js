@@ -11,7 +11,7 @@ const BlockMatrixes = {
     L: [[true, true, true], [true, false, false], [false, false, false]]
 }
 
-const BLOCK_VELOCITY = 16;
+const BLOCK_VELOCITY = 24;
 
 export class Block extends Phaser.Sprite{
     constructor() {
@@ -38,15 +38,15 @@ export class Block extends Phaser.Sprite{
         this.body.velocity.setTo(0, BLOCK_VELOCITY);
 
         if (this.game.input.keyboard.isDown(Phaser.KeyCode.DOWN)) {
-            this.body.velocity.y = 112;
+            this.body.velocity.y += BLOCK_VELOCITY;
         }
         
-        if (this.game.input.keyboard.isDown(Phaser.KeyCode.RIGHT)) {
-            this.body.velocity.x = 128;
+        else if (this.game.input.keyboard.isDown(Phaser.KeyCode.RIGHT)) {
+            this.body.velocity.x += BLOCK_VELOCITY;
         }
 
-        if (this.game.input.keyboard.isDown(Phaser.KeyCode.LEFT)) {
-            this.body.velocity.x = -128;
+        else if (this.game.input.keyboard.isDown(Phaser.KeyCode.LEFT)) {
+            this.body.velocity.x += -BLOCK_VELOCITY;
         }
     }
 
