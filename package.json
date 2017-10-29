@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/prxg22/phaser-example/issues"
   },
-  "homepage": "https://github.com/prxg22/phaser-example#readme",
+  "homepage": "https://github.com/prxg22/phaser-example",
   "dependencies": {
     "phaser-ce": "^2.8.8"
   }

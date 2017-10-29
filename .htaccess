@@ -1,0 +1,4 @@
+DirectoryIndex src/index.html
+
+RewriteEngine On
+RewriteRule ^(js|assets|css)/.+ src/$0 [L]
