@@ -1,2 +1,2 @@
-# phaser-example
-A Phaser + ES6 game example
+# tetris
+Phaser + ES6 tetris game.
