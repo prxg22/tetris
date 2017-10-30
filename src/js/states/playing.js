@@ -1,15 +1,16 @@
+import {
+    L_WALL_X,
+    L_WALL_Y,
+    R_WALL_X,
+    R_WALL_Y,
+    GROUND_X,
+    GROUND_Y
+} from '../utils.js';
 import { Wall } from '../entities/wall';
 import { Ground } from '../entities/ground';
 import { Boundary } from '../entities/boundary';
 import { Block } from '../entities/block';
 import { LandedBlocks } from '../entities/landed-blocks';
-
-const L_WALL_X = 0;
-const L_WALL_Y = 0;
-const R_WALL_X = 312;
-const R_WALL_Y = 0;
-const GROUND_X = 16;
-const GROUND_Y = 272;
 
 export class Playing extends Phaser.State {
     create() {
@@ -32,8 +33,15 @@ export class Playing extends Phaser.State {
         game.physics.arcade.collide(this.block, this.landedBlocks);
 
         // DEBUG
+    }
+
+    render() {
         game.debug.body(this.block);
         game.debug.body(this.ground);
+        this.boundaries.children.map((sprite, index) => {
+            game.debug.spriteInfo(sprite, 360, 32 * index * 3 + 30);
+        })
+
     }
 
     dropBlock(block) {

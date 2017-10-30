@@ -1,22 +1,10 @@
 import { Pixel } from './pixel.js';
-
-const Type = ['O', 'T', 'Z', 'S', 'J', 'L'];
-
-const BlockMatrixes = {
-    O: [[true, true, false], [true, true, false], [false, false, false]],
-    T: [[true, true, true], [false, true, false], [false, false, false]],
-    Z: [[true, true, false], [false, true, true], [false, false, false]],
-    S: [[false, true, true], [true, true, false], [false, false, false]],
-    J: [[true, true, true], [false, false, true], [false, false, false]],
-    L: [[true, true, true], [true, false, false], [false, false, false]]
-}
-
-const BLOCK_VELOCITY = 24;
+import { Type, BlockMatrixes, BLOCK_VELOCITY } from '../utils.js';
 
 export class Block extends Phaser.Sprite{
     constructor() {
         let type = Type[game.rnd.between(0, 5)];
-        let x = game.rnd.between(16, 250);
+        let x = game.rnd.between(8, 136);
         super(game, x, 0, 'tetris-' + type);
 
         this.block_type = type;
