@@ -1,10 +1,13 @@
 import {
+    WALL_H,
+    WALL_W,
     L_WALL_X,
     L_WALL_Y,
     R_WALL_X,
     R_WALL_Y,
     GROUND_X,
-    GROUND_Y
+    GROUND_Y,
+    DELTA
 } from '../utils.js';
 import { Wall } from '../entities/wall';
 import { Ground } from '../entities/ground';
@@ -18,49 +21,68 @@ export class Playing extends Phaser.State {
         this.ground = new Ground(game, GROUND_X, GROUND_Y);
 
         this.boundaries = new Boundary(game, this.ground);
-        this.boundaries.add(new Wall(game, L_WALL_X, L_WALL_Y));
-        this.boundaries.add(new Wall(game, R_WALL_X, R_WALL_Y));
+        this.boundaries.add(new Wall(game, R_WALL_X, R_WALL_Y, 'right'));
+        this.boundaries.add(new Wall(game, L_WALL_X, L_WALL_Y, 'left'));
 
         this.landedBlocks = new LandedBlocks(game);
-
-        this.dropBlock();
+        this.startTime = new Date();
+        this.resetInput();
     }
 
     update() {
-        game.physics.arcade.overlap(this.block, this.landedBlocks, (block) => this.dropBlock(block));
-        game.physics.arcade.overlap(this.block, this.ground, (block) => this.dropBlock(block));
-        game.physics.arcade.collide(this.block, this.boundaries);
-        game.physics.arcade.collide(this.block, this.landedBlocks);
+        this.dropBlock();
+        let now = new Date();
+        let delta = now.getTime() - this.startTime.getTime();
+        let deltaLimit = !this.block.isThrottling ? DELTA : DELTA / 2;
 
-        // DEBUG
-    }
+        this.inputs = {
+            down: this.inputs.down || game.input.keyboard.isDown(Phaser.Keyboard.DOWN),
+            right: this.inputs.right || game.input.keyboard.isDown(Phaser.Keyboard.RIGHT),
+            left: this.inputs.left || game.input.keyboard.isDown(Phaser.Keyboard.LEFT),
+        }
 
-    render() {
-        game.debug.body(this.block);
-        game.debug.body(this.ground);
-        this.boundaries.children.map((sprite, index) => {
-            game.debug.spriteInfo(sprite, 360, 32 * index * 3 + 30);
-        })
+        game.physics.arcade.overlap(this.block, this.boundaries, (block, boundary) => block.collideBoundary(boundary));
 
-    }
+        game.physics.arcade.overlap(this.block, this.landedBlocks, (block, pixel) => {
+            this.landedBlocks.landBlock(block);
+            block.kill();
+        }, 
+        (block, pixel) => block.checkCollideLandedBlock(pixel));
 
-    dropBlock(block) {
-        if (block !== this.block && !this.block.body.touching.down) {
+        game.physics.arcade.overlap(this.block, this.ground, (block) => {
+            this.landedBlocks.landBlock(block);
+            block.kill();
+        });
+
+
+        if (delta < deltaLimit || !this.block.exists) {
             return;
         }
 
-        if (this.block) {
-            this.block.body.immovable = true;
-            this.landedBlocks.add(this.block.toPixels());
-            this.block.kill();
+        this.startTime = now;
+
+        this.block.fall(this.inputs);
+        this.resetInput();
+    }
+
+    render() {
+        // DEBUG
+        game.debug.body(this.block);
+        game.debug.body(this.ground);
+    }
+
+    dropBlock() {
+        if (!this.block || !this.block.exists) {
+            this.block = new Block();
         }
-
-        this.block = new Block();
     }
 
-    checkLine(line) {
-        return this.board[line].reduce( (res, pixel) => pixel && res);
+    resetInput() {
+        this.inputs = {
+            down: false,
+            right: false,
+            left: false,
+            rotate: false
+        }
     }
-
-    removeLine(line) {}
 }

@@ -1,6 +1,6 @@
 export class Pixel extends Phaser.Sprite {
-    constructor(game, x, y) {
-        super(game, x, y, 'pixel');
+    constructor(game, x, y, frame = 'pixel') {
+        super(game, x, y, frame);
 
         this.game.physics.arcade.enable(this);
         this.body.immovable = true;

@@ -13,4 +13,12 @@ export class LandedBlocks extends Phaser.Group {
             super.add(pixels);
         }
     }
+
+    landBlock(block) {
+        if (!block || !block.exists) {
+            return;
+        }
+        block.kill();
+        this.add(block.toPixels());
+    }
 }
