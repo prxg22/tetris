@@ -1,33 +1,20 @@
 /* Scenario */
-export const WALL_W = 8;
-export const WALL_H = 144;
-
-export const L_WALL_X = 0;
-export const L_WALL_Y = 0;
-export const R_WALL_X = 152;
-export const R_WALL_Y = 0;
-export const GROUND_X = 8;
-export const GROUND_Y = 136;
+export const BOARD_SIZE = { w: 20, h: 25 };
+export const WALL_TILE_INDEX = 1;
+export const GROUND_TILE_INDEX = 2;
 
 /* Block */
-export const Type = ['O', 'T', 'Z', 'S', 'J', 'L'];
+export const TYPE = ['O', 'I', 'T', 'Z', 'S', 'J', 'L'];
 
-export const BlockMatrixes = {
-    O: [[true, true, false], [true, true, false]],
-    T: [[true, true, true], [false, true, false]],
-    Z: [[true, true, false], [false, true, true]],
-    S: [[false, true, true], [true, true, false]],
-    J: [[true, true, true], [false, false, true]],
-    L: [[true, true, true], [true, false, false]]
+export const BLOCKS_FORMAT = {
+    O: [[3, 3], [3, 3]],
+    I: [[4, 4, 4, 4]],
+    T: [[5, 5, 5], [-1, 5, -1]],
+    Z: [[6, 6, -1], [-1, 6, 6]],
+    S: [[-1, 7, 7], [7, 7, -1]],
+    J: [[8, 8, 8], [-1, -1, 8]],
+    L: [[9, 9, 9], [9, -1, -1]]
 };
-
-export const BLOCK_VELOCITY_Y = 8;
-export const BLOCK_VELOCITY_X = 8;
-
-export const BLOCK_START_Y = 1;
-export const BLOCK_MIN_START_X = 8;
-export const BLOCK_MAX_START_X = 128;
-
 
 /* Pixel */
 export const PIXEL_SIZE = 8;

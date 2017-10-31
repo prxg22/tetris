@@ -1,118 +1,62 @@
 import { Pixel } from './pixel.js';
 import { 
-    Type,
-    BlockMatrixes,
-    BLOCK_VELOCITY_Y,
-    BLOCK_VELOCITY_X,
-    BLOCK_MAX_START_X,
-    BLOCK_MIN_START_X,
-    BLOCK_START_Y,
-    PIXEL_SIZE
+    TYPE,
+    BLOCKS_FORMAT,
+    BOARD_SIZE
 } from '../utils.js';
 
-export class Block extends Phaser.Sprite{
-    constructor() {
-        let type = Type[game.rnd.between(0, 5)];
-        super(game, game.rnd.between(1, 15) * 8, 0, 'tetris-' + type);
+export class Block {
+    constructor(game) {
+        this.game = game;
+        let type = TYPE[game.rnd.between(0, 5)];
 
-        this.block_type = type;
-        this.block_matrix = BlockMatrixes[type];
-        this.isThrottling = false;
-
-        this.game.physics.arcade.enable(this);
-        this.body.bounce.setTo(0, 0);
-        this.game.add.existing(this);
-        
+        this.type = type;
+        this.format = BLOCKS_FORMAT[type];
+        this.pos = new Phaser.Point(this.game.rnd.between(1, BOARD_SIZE.w - 4), 0);
     }
 
-    update() {
-        this.isThrottling = false;
+    get x() {
+        return this.pos.x;
+    }
+    
+    set x(val) {
+        this.pos.x = val;
+    }
+    
+    get y() {
+        return this.pos.y;
+    }
+    
+    set y(val) {
+        this.pos.y = val;
     }
 
-    nextPosition(input) {
-        if (!this.exists) {
-            return this.position;
+    nextPos(inputs) {
+        if (!inputs) {
+            return this.pos;
         }
 
-        let x = this.x;
-        let y = this.y + BLOCK_VELOCITY_Y;
+        let x = this.pos.x;
+        let y = this.pos.y + 1;
 
-        if (input.down) {
-            this.isThrottling = true;
-        }
-        if (input.left) {
-            x -= BLOCK_VELOCITY_X;
+        if (inputs.left) {
+            x--;
         }
 
-        if (input.right) {
-            x += BLOCK_VELOCITY_X;
+        if (inputs.right) {
+            x++;
+        }
+
+        if (inputs.down) {
+            y++;
         }
 
         return new Phaser.Point(x, y);
     }
 
 
-    fall(input) {
-        let nextPosition = this.nextPosition(input);
-        this.x = nextPosition.x;
-        this.y = nextPosition.y;
-    }
-
-    collideBoundary(boundary) {
-        if (!this.exists) {
-            return ;
-        }
-
-        switch (boundary.name) {
-            case 'left':
-                this.x = boundary.x + boundary.width;
-                break;
-            case 'right':
-                this.x = boundary.x - this.width;
-                break;
-            case 'ground':
-                this.y = boundary.y - this.height;
-                break;
-        }
-    }
-
-    checkCollideLandedBlock(pixel) {
-        if (!this.exists) {
-            return false;
-        }
-
-        let row = Math.ceil(Math.abs(this.y + this.height - pixel.y) / PIXEL_SIZE);
-        let column = Math.ceil(Math.abs(this.x - pixel.x) / PIXEL_SIZE);
-        let collide = this.block_matrix[row][column];
-
-        if (collide) {
-            this.y = pixel.y - this.height;
-        }
-    }
-
-    collideLandedBlock(pixel) {
-        if (!this.exists) {
-            return;
-        }
-
-        console.log('posicao atual: ' + this.position);
-        console.log('posicao pixel:' + pixel.position);
-    }
-
-    toPixels() {
-        let pixels = [];
-        for (let i = 0; i < this.block_matrix.length; i++) {
-            for (let j = 0; j < this.block_matrix[i].length; j++) {
-                if (!this.block_matrix[i][j]) {
-                    continue;
-                }
-
-                let pixel = this.block_matrix[i][j];
-
-                pixels.push(new Pixel(this.game, this.x + j * PIXEL_SIZE, this.y + i * PIXEL_SIZE));
-            }
-        }
-
-        return pixels;
+    move(movement) {
+        this.lastPos = this.pos;
+        this.pos = this.nextPos(movement);
     }
 }
