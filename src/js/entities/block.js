@@ -1,4 +1,3 @@
-import { Pixel } from './pixel.js';
 import { 
     TYPE,
     BLOCKS_FORMAT,
@@ -11,8 +10,11 @@ export class Block {
         let type = TYPE[game.rnd.between(0, 5)];
 
         this.type = type;
-        this.format = BLOCKS_FORMAT[type];
-        this.pos = new Phaser.Point(this.game.rnd.between(1, BOARD_SIZE.w - 4), 0);
+        this.shapes = BLOCKS_FORMAT[this.type];
+        this.rotation = 0;
+        this.pos = new Phaser.Point(this.game.rnd.between(1, Math.ceil(BOARD_SIZE.w / 2)), 0);
+        this.movement = 0;
+        this.throttle = false;
     }
 
     get x() {
@@ -31,32 +33,27 @@ export class Block {
         this.pos.y = val;
     }
 
-    nextPos(inputs) {
-        if (!inputs) {
-            return this.pos;
-        }
+    get shape() {
+        return this.shapes[this.rotation];
+    }
 
-        let x = this.pos.x;
-        let y = this.pos.y + 1;
+    get nextPos() {
+        let throttle = + this.throttle ? 1 : 0;
 
-        if (inputs.left) {
-            x--;
-        }
-
-        if (inputs.right) {
-            x++;
-        }
-
-        if (inputs.down) {
-            y++;
-        }
+        let x = this.pos.x + this.movement;
+        let y = this.pos.y + 1 + throttle;
 
         return new Phaser.Point(x, y);
+    }
+
+    rotate() {
+        this.rotation = ++this.rotation % this.shapes.length;
     }
 
 
     move(movement) {
         this.lastPos = this.pos;
-        this.pos = this.nextPos(movement);
+        this.pos = this.nextPos;
+        this.movement = 0;
     }
 }

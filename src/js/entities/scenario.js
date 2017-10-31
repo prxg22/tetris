@@ -4,13 +4,17 @@ import { Block } from './block';
 export class Scenario extends Phaser.Tilemap {
     constructor(game) {
        super(game, null, PIXEL_SIZE, PIXEL_SIZE, BOARD_SIZE.w, BOARD_SIZE.h);
+
        this.createBlankLayer('walls', this.width, this.height, PIXEL_SIZE, PIXEL_SIZE);
        this.createBlankLayer('landed', this.width, this.height, PIXEL_SIZE, PIXEL_SIZE);
        this.createBlankLayer('playing', this.width, this.height, PIXEL_SIZE, PIXEL_SIZE);
+
        this.addTilesetImage('blocks');
+
        this.fill(WALL_TILE_INDEX, 0, 0, 1, this.height - 1, 'walls');
        this.fill(WALL_TILE_INDEX, this.width - 1, 0, 1, this.height - 1, 'walls');
        this.fill(GROUND_TILE_INDEX, 0, this.height - 1, this.width, 1, 'landed');
+
        this.landed = [];
        this.addBlock();
     }
@@ -23,31 +27,20 @@ export class Scenario extends Phaser.Tilemap {
         this.block = new Block(this.game);
     }
 
-    collide(movements) {
-        let next = this.block.nextPos(movements);
-        let collisions = {
-            walls: false,
-            landed: false
-        }
+    collide(layer) {
+        let res = false;
+        let next = this.block.nextPos;
 
-        this.block.format.map((pixels, row) => {
+        this.block.shape.map((pixels, row) => {
             pixels.map((pixel, column) => {
-                if (this.block.format[row][column] > 0 && this.getTile(next.x + column, next.y + row, 'walls')) {
-                    collisions.walls = true;
-                }
-
-                if (this.block.format[row][column] > 0 && this.getTile(next.x + column, next.y + row, 'landed')) {
-                    collisions.landed = true;
+                let tile = this.getTile(next.x + column, next.y + row, layer);
+                if (pixel > 0 && tile) {
+                    res = true;
                 }
             });
         });
 
-        if (collisions.landed) {
-            this.addBlock();
-        } else if (collisions.walls) {
-            this.block.x = this.block.lastPos.x;
-        }
-        return collisions;
+        return res;
     }
 
     reset() {
@@ -60,10 +53,10 @@ export class Scenario extends Phaser.Tilemap {
     }
     
     renderBlock (block, layer) {
-        block.format.map((pixels, row) => {
+        block.shape.map((pixels, row) => {
             pixels.map((pixel, column) => {
-                if (block.format[row][column] > 0) {
-                    this.putTile(block.format[row][column], block.pos.x + column, block.pos.y + row, layer);
+                if (block.shape[row][column] > 0) {
+                    this.putTile(block.shape[row][column], block.pos.x + column, block.pos.y + row, layer);
                 }
             });
         });
