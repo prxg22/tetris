@@ -15,6 +15,7 @@ export class Block {
         this.pos = new Phaser.Point(this.game.rnd.between(1, Math.ceil(BOARD_SIZE.w / 2)), 0);
         this.movement = 0;
         this.throttle = false;
+        this.alive = true;
     }
 
     get x() {
@@ -33,15 +34,21 @@ export class Block {
         this.pos.y = val;
     }
 
+    get width() {
+        this.shape[0].length
+    }
+
+    get height() {
+        return this.shape.length;
+    }
+
     get shape() {
         return this.shapes[this.rotation];
     }
 
     get nextPos() {
-        let throttle = + this.throttle ? 1 : 0;
-
-        let x = this.pos.x + this.movement;
-        let y = this.pos.y + 1 + throttle;
+        let x = this.x + this.movement;
+        let y = this.y + 1;
 
         return new Phaser.Point(x, y);
     }
@@ -50,10 +57,13 @@ export class Block {
         this.rotation = ++this.rotation % this.shapes.length;
     }
 
-
     move(movement) {
         this.lastPos = this.pos;
         this.pos = this.nextPos;
         this.movement = 0;
+    }
+
+    kill() {
+        this.alive = false;
     }
 }

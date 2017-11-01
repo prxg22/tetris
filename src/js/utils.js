@@ -48,5 +48,5 @@ export const PIXEL_SIZE = 8;
 
 
 /* Settings */
-export const DELTA = 1500;
+export const DELTA = 100;
 
