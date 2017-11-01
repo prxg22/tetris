@@ -1,5 +1,5 @@
 /* Scenario */
-export const BOARD_SIZE = { w: 20, h: 25 };
+export const BOARD_SIZE = { w: 20, h: 30 };
 export const WALL_TILE_INDEX = 1;
 export const GROUND_TILE_INDEX = 2;
 
@@ -8,7 +8,7 @@ export const TYPE = ['O', 'I', 'T', 'Z', 'S', 'J', 'L'];
 
 export const BLOCKS_FORMAT = {
     O: [
-        [[3, 3, -1, -1], [3, 3, -1, -1]]
+        [[3, 3], [3, 3]]
     ],
     I: [
       [[4, 4, 4, 4]],

@@ -35,7 +35,7 @@ export class Block {
     }
 
     get width() {
-        this.shape[0].length
+        return this.shape[0].length;
     }
 
     get height() {
@@ -53,8 +53,12 @@ export class Block {
         return new Phaser.Point(x, y);
     }
 
-    rotate() {
+    rotateClockwise() {
         this.rotation = ++this.rotation % this.shapes.length;
+    }
+    
+    rotateAnticlockwise() {
+        this.rotation = --this.rotation % this.shapes.length;
     }
 
     move(movement) {

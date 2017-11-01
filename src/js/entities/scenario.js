@@ -28,7 +28,9 @@ export class Scenario extends Phaser.Tilemap {
         block.shape.map((pixels, row) => {
             pixels.map((pixel, column) => {
                 if (block.shape[row][column] > 0) {
-                    this.putTile(block.shape[row][column], block.x + column + 1, block.y + row);
+                    if (block.shape[row][column] > 0) {
+                        this.putTile(block.shape[row][column], block.x + column + 1, block.y + row);
+                    }
                 }
             });
         });
