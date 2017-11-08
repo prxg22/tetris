@@ -37,14 +37,16 @@ export class Playing extends Phaser.State {
 
         this.timerInit = new Date();
         this.resolveInput();
-        this.inputCollision();
+        let rows = this.inputCollision();
 
-        if (this.checkCollision()) {
+        rows = [...rows, ...this.checkCollision()];
+        if (rows && rows.length > 0) {
             this.block.kill();
         }
 
         if (!this.block.alive) {
             this.addBlock();
+            this.checkRows(rows);
             return;
         }
 
@@ -52,7 +54,6 @@ export class Playing extends Phaser.State {
     }
 
     render() {
-        this.scenario.reset();
         this.scenario.render(this.block, this.landed);
     }
 
@@ -82,7 +83,6 @@ export class Playing extends Phaser.State {
                 break;
             case 'rotate':
                 this.block.rotateClockwise();
-                if (this.checkCollision()) { this.block.rotateAnticlockwise() }
                 break;
         }
 
@@ -102,24 +102,28 @@ export class Playing extends Phaser.State {
 
         if (next.y + this.block.height > this.landedHeight) {
             this.block.kill();
+            return [this.landedHeight -1];
         }
+
+        return [];
     }
 
     checkCollision() {
+        let rows = [];
         let shape = this.block.shape;
         if (!this.block.alive) {
-            return;
+            return [];
         }
 
         for (let row = 0; row < shape.length; row++) {
             for (let column = 0; column < shape[row].length; column++) {
                 if(this.block.shape[row][column] > 0 && this.landed[this.block.nextPos.y + row][this.block.nextPos.x + column] > 0) {
-                    return true;
+                    rows.push(row + this.block.nextPos.y);
                 }
             }
         }
 
-        return false;
+        return rows;
     }
 
     initiateLanded() {
@@ -132,6 +136,15 @@ export class Playing extends Phaser.State {
                 this.landed[i].push(-1);
             }
         }
+    }
+
+    checkRows(rows) {
+        rows.map(row => {
+            if (this.landed[row].indexOf(-1) < 0) {
+                let deleted = this.landed.splice(row, 1);
+                this.landed.unshift(deleted.fill(-1));
+            }
+        });
     }
 
 }
